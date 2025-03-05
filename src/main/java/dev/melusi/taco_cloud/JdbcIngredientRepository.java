@@ -34,6 +34,16 @@ public class JdbcIngredientRepository implements IngredientRepository{
                 Optional.of(results.get(0));
     }
 
+    @Override
+    public Ingredient save(Ingredient ingredient) {
+        jdbcTemplate.update(
+                "insert into Ingredient (id, name, type) values (?, ?, ?)",
+                ingredient.getId(),
+                ingredient.getName(),
+                ingredient.getType().toString());
+        return ingredient;
+    }
+
     private Ingredient mapRowToIngredient(ResultSet row, int rowNum) throws SQLException {
         return new Ingredient(
                 row.getString("id"),
