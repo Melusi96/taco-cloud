@@ -1,6 +1,7 @@
 package dev.melusi.taco_cloud;
 
-public interface OrderRepository {
+import org.springframework.data.repository.CrudRepository;
 
-    TacoOrder save(TacoOrder order);
+public interface OrderRepository extends CrudRepository<TacoOrder, Long> {
+
 }
