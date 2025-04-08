@@ -1,5 +1,6 @@
 package dev.melusi.taco_cloud;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -12,11 +13,12 @@ import java.util.Optional;
 @RequestMapping(path = "/api/tacos", produces = "application/json") //Handles requests for /api/tacos
 @CrossOrigin(origins = "http://tacocloud:8080") //Allows cross-origin requests
 public class TacoController {
-    private TacoRepository tacoRepo;
-    private OrderRepository repo;
+    private final TacoRepository tacoRepo;
+    private final OrderRepository repo;
 
-    public TacoController(TacoRepository tacoRepo){
+    public TacoController(TacoRepository tacoRepo, OrderRepository repo){
         this.tacoRepo = tacoRepo;
+        this.repo = repo;
     }
 
     @GetMapping(params = "recent")
@@ -72,5 +74,13 @@ public class TacoController {
             order.setCcCVV(patch.getCcCVV());
         }
         return repo.save(order);
+    }
+
+    @DeleteMapping("/{orderId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(@PathVariable("orderId") Long orderId) {
+        try {
+            repo.deleteById(orderId);
+        } catch (EmptyResultDataAccessException e) {}
     }
 }
